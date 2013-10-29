@@ -21,6 +21,7 @@ bool next_lexic_permutation(Bucket* out, Bucket* in, Generator* g);
 bool next_separator(Bucket* out, Bucket* in, Generator* g);
 uint64_t string_value(char *string);
 int compar(const void*,const void*);
+bool next_product(Bucket* out, Bucket* in, Generator* g);
 
 int compar(const void* c1, const void* c2)
 {
@@ -49,6 +50,8 @@ bool generate_next(Bucket* out, Generator* g, Bucket* b)
     case GEN_SEPARATOR:
       return next_separator(out, b, g);
       break;
+    case GEN_PRODUCT:
+      return next_product(out, b, g);
   }
 
   return false;
@@ -248,6 +251,17 @@ bool init_generator_lexical_combination(Generator *g)
   return true;
 }
 
+bool init_generator_product(Generator *g, size_t size)
+{
+  if(size == 0) {
+    return false;
+  }
+  g->type = GEN_PRODUCT;
+  g->first = true;
+  g->product_size = size;
+  return true;
+}
+
 bool init_generator_separator(Generator *g, Bucket* separators)
 {
   size_t i;
@@ -262,5 +276,41 @@ bool init_generator_separator(Generator *g, Bucket* separators)
   g->separators_count = i;
   g->type = GEN_SEPARATOR;
   g->first = true;
+  return true;
+}
+
+bool next_product(Bucket* out, Bucket* in, Generator* g)
+{
+  ssize_t i;
+  Word word, tmp;
+  Position next_pos;
+
+  if(g->first) {
+    set_bucket_position(in, &(in->first));
+    get_word(&word, in);
+    for(i = 0; (size_t) i < g->product_size; i++) {
+      g->product_positions[i] = in->first;
+      set_word(out, &word, &next_pos);
+      set_bucket_position(out, &next_pos);
+    }
+    g->first = false;
+  } else {
+    for(set_bucket_position(out, &out->last), i = g->product_size - 1;
+        i >= 0;
+        prev_word(&tmp, out), i--) {
+
+      set_bucket_position(in, &g->product_positions[i]);
+      if(next_word(&word, in)) {
+        set_word(out, &word, &next_pos);
+        set_bucket_position(out, &next_pos);
+        g->product_positions[i] = in->position;
+        break;
+      }
+      if(i == 0) {
+        return false;
+      }
+      g->product_positions[i] = in->first;
+    }
+  }
   return true;
 }
