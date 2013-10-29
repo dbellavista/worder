@@ -1,0 +1,18 @@
+SET(CMAKE_L_FLAGS $CMAKE_L_FLAGS -lm)
+
+INCLUDE_DIRECTORIES(./)
+ADD_LIBRARY(worder SHARED ./elements/generator.c ./elements/bucket.c
+  ./elements/transformer.c)
+
+IF(UNIX)
+  TARGET_LINK_LIBRARIES(worder m)
+ENDIF(UNIX)
+
+INSTALL (FILES ./worder.h DESTINATION ${Worder_INCLUDE_DIR})
+
+INSTALL (TARGETS worder
+  RUNTIME DESTINATION ${Worder_LIB_DIR}
+  LIBRARY DESTINATION ${Worder_LIB_DIR}
+  ARCHIVE DESTINATION ${Worder_LIB_DIR})
+
+ADD_SUBDIRECTORY(tests)
