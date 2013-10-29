@@ -9,7 +9,7 @@
  *
  */
 
-#include "worder.h"
+#include  <worder.h>
 #include	<stdlib.h>
 #include	<string.h>
 
