@@ -22,7 +22,7 @@
 #include <stdint.h>
 
 #define MAX_WORD_SIZE 50
-#define MAX_BUCKET_ARRAY_SIZE 50
+#define MAX_BUCKET_ARRAY_SIZE 500
 #define MAX_SEPARATOR_NUMBER 50
 #define MAX_COMBINATION_ELEMENTS 50
 
