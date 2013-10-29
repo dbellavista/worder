@@ -43,8 +43,8 @@ int main()
   print_bucket(&b);
 
   init_bucket_array(&bs, 3);
-  strcpy(bs.array[0].word, "-");
-  strcpy(bs.array[1].word, "");
+  strcpy(bs.array[0].word, "");
+  strcpy(bs.array[1].word, "-");
   strcpy(bs.array[2].word, "+");
   printf("-------------\n");
 
@@ -99,6 +99,14 @@ int main()
     print_bucket(&b2);
     printf("--\n");
   }
+  printf("-------------\n");
+  init_bucket_array(&b2, 6);
+  init_generator_product(&gen, 6);
+  while(generate_next(&b2, &gen, &bs)) {
+    print_bucket(&b2);
+    printf("--\n");
+  }
+
   printf("-------------\n");
 
   return EXIT_SUCCESS;
