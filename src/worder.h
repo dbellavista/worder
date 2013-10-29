@@ -92,7 +92,7 @@ struct transformator
 };
 typedef struct transformator Transformator;
 
-enum generator_type {GEN_COMBINATOR, GEN_LEXIC_PERMUTATOR, GEN_SEPARATOR};
+enum generator_type {GEN_COMBINATOR, GEN_LEXIC_PERMUTATOR, GEN_SEPARATOR, GEN_PRODUCT};
 
 struct generator
 {
@@ -115,6 +115,11 @@ struct generator
       uint64_t lexic_elem_value[MAX_COMBINATION_ELEMENTS];
       Position lexic_positions[MAX_COMBINATION_ELEMENTS];
       size_t lexic_size;
+    };
+    struct // Product
+    {
+      Position product_positions[MAX_COMBINATION_ELEMENTS];
+      size_t product_size;
     };
   };
 };
@@ -157,6 +162,8 @@ bool init_transformator_concat(Transformator* t, Word *wc);
 bool init_generator_combination(Generator *gcom, size_t combination_number);
 
 bool init_generator_lexical_combination(Generator *g);
+
+bool init_generator_product(Generator *g, size_t size);
 
 bool init_generator_separator(Generator *g, Bucket* separators);
 
