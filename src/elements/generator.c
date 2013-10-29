@@ -116,6 +116,7 @@ bool next_lexic_permutation(Bucket* out, Bucket* in, Generator* g)
       g->lexic_size += 1;
       tmp_positions[g->lexic_size] = in->position;
     }
+    set_bucket_size(out, g->lexic_size);
 
     memcpy(g->lexic_positions, tmp_positions, MAX_COMBINATION_ELEMENTS * sizeof(uint64_t));
     memcpy(g->lexic_elem_value, tmp_vals, MAX_COMBINATION_ELEMENTS * sizeof(uint64_t));
@@ -288,6 +289,7 @@ bool next_product(Bucket* out, Bucket* in, Generator* g)
   if(g->first) {
     set_bucket_position(in, &(in->first));
     get_word(&word, in);
+    set_bucket_size(out, g->product_size);
     for(i = 0; (size_t) i < g->product_size; i++) {
       g->product_positions[i] = in->first;
       set_word(out, &word, &next_pos);
