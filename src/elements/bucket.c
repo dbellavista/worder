@@ -34,6 +34,9 @@ off_t _read_word(char* dest, FILE* f)
     if(l < size) {
       if(tmp[l - 1] == '\n') {
         tmp[l - 1] = 0;
+        if(tmp[l - 2] == '\r') {
+          tmp[l - 2] = 0;
+        }
         return ftello(f);
       }
     } else {
