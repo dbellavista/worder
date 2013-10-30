@@ -146,7 +146,7 @@ void transform(Word* out, Transformator* t, Word* el);
 
 bool generate_next(Bucket* out, Generator* g, Bucket* b);
 
-void print_bucket(Bucket* b);
+void print_bucket(Bucket* b, const char* prefix, const char* suffix);
 
 bool init_bucket_array(Bucket* b, size_t size);
 
