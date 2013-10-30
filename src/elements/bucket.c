@@ -56,22 +56,23 @@ uint64_t get_bucket_size(Bucket* b)
   }
 }
 
-void set_bucket_size(Bucket* b, size_t size)
+bool set_bucket_size(Bucket* b, size_t size)
 {
   switch(b->type) {
     case BUCKET_FILE:
       // TODO!!!
-      return;
+      return false;
       break;
     case BUCKET_ARRAY:
       if(size > MAX_BUCKET_ARRAY_SIZE) {
-        b->array_size = MAX_BUCKET_ARRAY_SIZE;
+        return false;
       } else {
         b->array_size = size;
         b->last.array_position = size - 1;
       }
       break;
   }
+  return true;
 }
 
 bool set_bucket_position(Bucket* b, Position* pos)

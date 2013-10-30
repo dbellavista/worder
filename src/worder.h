@@ -127,7 +127,7 @@ struct generator
 
 typedef struct generator Generator;
 
-void set_bucket_size(Bucket* b, size_t size);
+bool set_bucket_size(Bucket* b, size_t size);
 
 bool set_bucket_position(Bucket* b, Position* pos);
 
