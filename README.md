@@ -27,3 +27,15 @@ A transformer takes a word and returns a new word.
 ## Usage
 
 Documentation is still in progress, see the demo for an example.
+
+## Compilation
+
+The project is managed by cmake. To compile library, test and demo just:
+
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
+
+Of course on windows you can use cmake-gui and generate your fancy Visual
+Studio project. I haven't tested the code portability, though.
