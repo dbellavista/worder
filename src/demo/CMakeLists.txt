@@ -1,0 +1,5 @@
+ADD_EXECUTABLE (demo1 demo1.c)
+
+TARGET_LINK_LIBRARIES (demo1 worder)
+
+INSTALL (TARGETS demo1 DESTINATION ${Worder_BIN_DIR})
