@@ -118,7 +118,8 @@ bool init_bucket_file(Bucket* b, char* filename)
     return false;
   }
   return true;
-} 
+}
+
 bool init_bucket_array(Bucket* b, size_t size)
 {
   size_t i;
@@ -134,6 +135,25 @@ bool init_bucket_array(Bucket* b, size_t size)
   }
 
   return true;
+}
+
+bool destroy_bucket(Bucket* b)
+{
+  switch(b->type) {
+    case BUCKET_ARRAY:
+      b->first.array_position = 0;
+      b->last.array_position = 0;
+      b->position.array_position = 0;
+      b->array_size = 0;
+      return true;
+    case BUCKET_FILE:
+      b->first.file_position = 0;
+      b->last.file_position = 0;
+      b->position.file_position = 0;
+      fclose(b->file);
+      b->file = NULL;
+      return true;
+  }
 }
 
 bool b_relative_movement(Bucket* b, int movement)

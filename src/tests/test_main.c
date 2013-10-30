@@ -106,5 +106,6 @@ int main()
 
   printf("-------------\n");
 
+  destroy_bucket(&bf);
   return EXIT_SUCCESS;
 }				/* ----------  end of function main  ---------- */

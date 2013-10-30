@@ -165,6 +165,8 @@ bool init_bucket_array(Bucket* b, size_t size);
 
 bool init_bucket_file(Bucket* b, char* filename);
 
+bool destroy_bucket(Bucket* b);
+
 bool init_transformator_appender(Transformator* t, bool t_rand, bool t_num, bool
     t_spec, int rand_range, int num, char spec_c);
 
