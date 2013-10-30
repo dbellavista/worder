@@ -3,22 +3,27 @@
 Worder aims to be a framework for easily expanding wordlists, by using a
 pipeline infrastructure.
 
-## Word
+Currently only the basic elements are defined and not the pipeline itself.
 
-A wordlist element
+## Basic Elements
 
-## Bucket
+### Word
+A wordlist element.
 
-A bucket of words, the position can be setted.
+### Bucket
 
-## Generator
+A bucket of words, with an usage interface that resemble a list. A bucket can
+be for instance a file or an array. The file interface, however is still
+uncomplete.
+
+### Generator
 
 A generator takes an input bucket and generates multiple buckets.
 
-## Transformer
+### Transformer
 
 A transformer takes a word and returns a new word.
 
-## Bulker
+## Usage
 
-A bulker takes a word and returns a bucket
+Documentation is still in progress, see the demo for an example.
