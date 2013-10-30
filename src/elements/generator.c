@@ -109,7 +109,7 @@ bool next_lexic_permutation(Bucket* out, Bucket* in, Generator* g)
     set_bucket_position(in, &(in->first));
 
     g->lexic_size = 0;
-    g->lexic_positions[0] = in->position;
+    tmp_positions[0] = in->position;
 
     while(b_get_word_and_increment(&word, in)) {
       tmp_vals[g->lexic_size] = string_value(word.word);
