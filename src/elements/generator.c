@@ -106,6 +106,7 @@ bool next_lexic_permutation(Bucket* out, Bucket* in, Generator* g)
     bool marked_indexes[MAX_COMBINATION_ELEMENTS];
 
     set_bucket_position(in, &(in->first));
+
     g->lexic_size = 0;
     g->lexic_positions[0] = in->position;
 
@@ -203,9 +204,13 @@ bool next_combination(Bucket* out, Bucket* in, Generator* g)
       set_bucket_position(out, &tmp_pos);
     }
     next_word(&word, in);
+
+    g->input_status = in->position;
     g->first = false;
     return true;
   }
+
+  set_bucket_position(in, &g->input_status);
 
   for(set_bucket_position(out, &out->last), i = g->combination_number - 1;
       i >= 0;
@@ -220,6 +225,7 @@ bool next_combination(Bucket* out, Bucket* in, Generator* g)
       break;
     }
     if(i == 0) {
+      g->input_status = in->position;
       return false;
     }
     set_bucket_position(in, &g->position_status[i - 1]);
@@ -231,6 +237,8 @@ bool next_combination(Bucket* out, Bucket* in, Generator* g)
     set_word(out, &pivot_word, &next_pos);
     set_bucket_position(out, &next_pos);
   }
+
+  g->input_status = in->position;
   return true;
 }
 
@@ -283,13 +291,14 @@ bool init_generator_separator(Generator *g, Bucket* separators)
 bool next_product(Bucket* out, Bucket* in, Generator* g)
 {
   ssize_t i;
+  size_t k;
   Word word, tmp;
   Position next_pos;
 
   if(g->first) {
+    set_bucket_size(out, g->product_size);
     set_bucket_position(in, &(in->first));
     get_word(&word, in);
-    set_bucket_size(out, g->product_size);
     for(i = 0; (size_t) i < g->product_size; i++) {
       g->product_positions[i] = in->first;
       set_word(out, &word, &next_pos);

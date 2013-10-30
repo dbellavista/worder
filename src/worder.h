@@ -107,6 +107,7 @@ struct generator
     };
     struct // Combinator
     {
+      Position input_status;
       Position position_status[MAX_COMBINATION_ELEMENTS];
       size_t combination_number;
     };
