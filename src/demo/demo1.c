@@ -72,7 +72,7 @@ bool doit(char* file, int num_c, char** separators, size_t sep_size)
     }
   }
 
-  init_generator_separator(&gen_sep, &separator_bucket);
+  destroy_bucket(&file_bucket);
   return true;
 }
 
