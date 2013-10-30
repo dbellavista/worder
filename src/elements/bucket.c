@@ -74,95 +74,6 @@ void set_bucket_size(Bucket* b, size_t size)
   }
 }
 
-bool set_word(Bucket* b, Word* in, Position* out)
-{
-  switch(b->type) {
-    case BUCKET_FILE:
-      // TODO!!!
-      out->file_position = -1;
-      return false;
-      break;
-    case BUCKET_ARRAY:
-      if(b->position.array_position < 0) {
-        out->file_position = -1;
-        return false;
-      }
-      if(b->position.array_position < (ssize_t) b->array_size) {
-        b->array[b->position.array_position] = *in;
-        out->array_position = b->position.array_position + 1;
-      } else {
-        out->file_position = -1;
-        return false;
-      }
-      break;
-  }
-  return true;
-}
-
-bool next_word(Word* out, Bucket* b)
-{
-  off_t new_fpos;
-  switch(b->type) {
-    case BUCKET_FILE:
-      new_fpos = _read_word(out->word, b->file);
-      if(new_fpos < 0) {
-        return false;
-      } else {
-        b->position.file_position = new_fpos;
-      }
-      break;
-    case BUCKET_ARRAY:
-      if(get_word(out, b)) {
-        b->position.array_position += 1;
-      } else {
-        return false;
-      }
-      break;
-  }
-  return true;
-}
-
-bool prev_word(Word* out, Bucket* b)
-{
-  switch(b->type) {
-    case BUCKET_FILE:
-      // TODO
-      return false;
-      break;
-    case BUCKET_ARRAY:
-      if(get_word(out, b)) {
-        b->position.array_position -= 1;
-      } else {
-        return false;
-      }
-      break;
-  }
-  return true;
-}
-
-bool get_word(Word* out, Bucket* b)
-{
-  Position old_pos;
-  switch(b->type) {
-    case BUCKET_FILE:
-      old_pos = b->position;
-      if(next_word(out, b)) {
-        set_bucket_position(b, &old_pos);
-      } else {
-        return false;
-      }
-      break;
-    case BUCKET_ARRAY:
-      if((size_t) b->position.array_position < b->array_size) {
-        *out = b->array[b->position.array_position];
-      } else {
-        return false;
-      }
-      break;
-  }
-  return true;
-}
-
 bool set_bucket_position(Bucket* b, Position* pos)
 {
   switch(b->type) {
@@ -183,14 +94,14 @@ bool set_bucket_position(Bucket* b, Position* pos)
   return false;
 }
 
-void print_bucket(Bucket* b)
+void print_bucket(Bucket* b, const char* prefix, const char* suffix)
 {
   Word w;
   Position old_pos;
   old_pos = b->position;
   set_bucket_position(b, &b->first);
-  while(next_word(&w, b)) {
-    printf("%s\n", w.word);
+  while(b_get_word_and_increment(&w, b)) {
+    printf("%s%s%s", prefix, w.word, suffix);
   }
   set_bucket_position(b, &old_pos);
 }
@@ -203,8 +114,7 @@ bool init_bucket_file(Bucket* b, char* filename)
     return false;
   }
   return true;
-}
-
+} 
 bool init_bucket_array(Bucket* b, size_t size)
 {
   size_t i;
@@ -222,7 +132,7 @@ bool init_bucket_array(Bucket* b, size_t size)
   return true;
 }
 
-bool relative_movement(Bucket* b, int movement)
+bool b_relative_movement(Bucket* b, int movement)
 {
   Word tmp;
   int res;
@@ -239,9 +149,9 @@ bool relative_movement(Bucket* b, int movement)
     case BUCKET_FILE:
       oldp = b->position;
       if(movement > 0) {
-        file_op = next_word;
+        file_op = b_get_word_and_increment;
       } else if(movement < 0) {
-        file_op = prev_word;
+        file_op = b_get_word_and_decrement;
       } else {
         return true;
       }
@@ -254,4 +164,196 @@ bool relative_movement(Bucket* b, int movement)
       return true;
   }
   return false;
+}
+
+bool b_get_word(Word* out, Bucket* b)
+{
+  Position old_pos;
+  switch(b->type) {
+    case BUCKET_FILE:
+      old_pos = b->position;
+      if(!b_get_word_and_increment(out, b)) {
+        return false;
+      }
+      set_bucket_position(b, &old_pos);
+      break;
+    case BUCKET_ARRAY:
+      if(b->position.array_position >= 0 && (size_t) b->position.array_position
+          < b->array_size) {
+        *out = b->array[b->position.array_position];
+      } else {
+        return false;
+      }
+      break;
+  }
+  return true;
+}
+
+bool b_get_word_and_increment(Word* out, Bucket* b)
+{
+  off_t new_fpos;
+  switch(b->type) {
+    case BUCKET_FILE:
+      new_fpos = _read_word(out->word, b->file);
+      if(new_fpos < 0) {
+        return false;
+      } else {
+        b->position.file_position = new_fpos;
+      }
+      break;
+    case BUCKET_ARRAY:
+      if(!b_get_word(out, b)) {
+        return false;
+      }
+      b->position.array_position = b->position.array_position + 1;
+      break;
+  }
+  return true;
+}
+
+bool b_get_word_and_decrement(Word* out, Bucket* b)
+{
+  switch(b->type) {
+    case BUCKET_FILE:
+      // TODO
+      return false;
+      break;
+    case BUCKET_ARRAY:
+      if(!b_get_word(out, b)) {
+        return false;
+      }
+      b->position.array_position = b->position.array_position - 1;
+      break;
+  }
+  return true;
+}
+
+bool b_increment_and_get_word(Word* out, Bucket* b)
+{
+  switch(b->type) {
+    case BUCKET_FILE:
+      if(!b_get_word_and_increment(out, b)) {
+        return false;
+      }
+      return b_get_word(out, b);
+      break;
+    case BUCKET_ARRAY:
+      b->position.array_position = b->position.array_position + 1;
+      if(!b_get_word(out, b)) {
+        return false;
+      }
+      break;
+  }
+  return true;
+}
+
+bool b_decrement_and_get_word(Word* out, Bucket* b)
+{
+  switch(b->type) {
+    case BUCKET_FILE:
+      // TODO
+      return false;
+      break;
+    case BUCKET_ARRAY:
+      b->position.array_position = b->position.array_position - 1;
+      if(!b_get_word(out, b)) {
+        return false;
+      }
+      break;
+  }
+  return true;
+}
+
+bool b_get_next_word(Word* out, Bucket* b, Position* np)
+{
+  Position old_pos;
+  bool res;
+  switch(b->type) {
+    case BUCKET_FILE:
+      old_pos = b->position;
+      if(!b_increment_and_get_word(out, b)) {
+        return false;
+      }
+      *np = b->position;
+      return set_bucket_position(b, &old_pos);
+    case BUCKET_ARRAY:
+      b->position.array_position = b->position.array_position + 1;
+      res = b_get_word(out, b);
+      *np = b->position;
+      b->position.array_position = b->position.array_position - 1;
+      return res;
+  }
+  return false;
+}
+
+bool b_get_prev_word(Word* out, Bucket* b, Position* pp)
+{
+  bool res;
+  switch(b->type) {
+    case BUCKET_FILE:
+      // TODO
+      return false;
+    case BUCKET_ARRAY:
+      b->position.array_position = b->position.array_position - 1;
+      res = b_get_word(out, b);
+      *pp = b->position;
+      b->position.array_position = b->position.array_position + 1;
+      return res;
+  }
+  return false;
+}
+
+bool b_set_word(Bucket* b, Word* in)
+{
+  switch(b->type) {
+    case BUCKET_FILE:
+      // TODO!!!
+      return false;
+      break;
+    case BUCKET_ARRAY:
+      if(b->position.array_position < 0) {
+        return false;
+      }
+      if(b->position.array_position < (ssize_t) b->array_size) {
+        b->array[b->position.array_position] = *in;
+      } else {
+        return false;
+      }
+      break;
+  }
+  return true;
+}
+
+bool b_set_word_and_increment(Bucket* b, Word* in)
+{
+  switch(b->type) {
+    case BUCKET_FILE:
+      // TODO!!!
+      return false;
+      break;
+    case BUCKET_ARRAY:
+      if(!b_set_word(b, in)) {
+        return false;
+      }
+      b->position.array_position = b->position.array_position + 1;
+      break;
+  }
+  return true;
+}
+
+bool b_set_word_and_decrement(Bucket* b, Word* in)
+{
+  switch(b->type) {
+    case BUCKET_FILE:
+      // TODO!!!
+      return false;
+      break;
+    case BUCKET_ARRAY:
+      if(!b_set_word(b, in)) {
+        return false;
+      }
+      b->position.array_position = b->position.array_position - 1;
+      break;
+  }
+  return true;
 }

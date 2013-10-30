@@ -131,17 +131,29 @@ void set_bucket_size(Bucket* b, size_t size);
 
 bool set_bucket_position(Bucket* b, Position* pos);
 
-bool relative_movement(Bucket* b, int movement);
-
 uint64_t get_bucket_size(Bucket* b);
 
-bool get_word(Word* out, Bucket* b);
+bool b_relative_movement(Bucket* b, int movement);
 
-bool next_word(Word* out, Bucket* b);
+bool b_get_word(Word* out, Bucket* b);
 
-bool prev_word(Word* out, Bucket* b);
+bool b_get_next_word(Word* out, Bucket* b, Position* next_position);
 
-bool set_word(Bucket* b, Word* in, Position* out);
+bool b_get_prev_word(Word* out, Bucket* b, Position* prev_position);
+
+bool b_get_word_and_increment(Word* out, Bucket* b);
+
+bool b_get_word_and_decrement(Word* out, Bucket* b);
+
+bool b_increment_and_get_word(Word* out, Bucket* b);
+
+bool b_decrement_and_get_word(Word* out, Bucket* b);
+
+bool b_set_word(Bucket* b, Word* in);
+
+bool b_set_word_and_increment(Bucket* b, Word* in);
+
+bool b_set_word_and_decrement(Bucket* b, Word* in);
 
 void transform(Word* out, Transformator* t, Word* el);
 

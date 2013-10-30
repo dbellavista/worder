@@ -30,7 +30,6 @@ int main()
   Bucket b, b2, bs, bf;
   Word wo, wi, wc;
   Transformator tr;
-  Position pos_out;
   Generator gen;
 
   init_bucket_array(&b, 6);
@@ -40,7 +39,7 @@ int main()
   strcpy(b.array[3].word, "come");
   strcpy(b.array[4].word, "state");
   strcpy(b.array[5].word, "?");
-  print_bucket(&b);
+  print_bucket(&b, "", "\n");
 
   init_bucket_array(&bs, 3);
   strcpy(bs.array[0].word, "");
@@ -51,33 +50,31 @@ int main()
   init_bucket_array(&b2, 3);
 
   init_transformator_leet(&tr, my_leet_map, true);
-  next_word(&wi, &b);
+  b_get_word_and_increment(&wi, &b);
   transform(&wo, &tr, &wi);
-  set_word(&b2, &wo, &pos_out);
-  set_bucket_position(&b2, &pos_out);
+  b_set_word_and_increment(&b2, &wo);
 
   init_transformator_appender(&tr, true, false, false, 100, 0, 0);
-  next_word(&wi, &b);
+  b_get_word_and_increment(&wi, &b);
   transform(&wo, &tr, &wi);
-  set_word(&b2, &wo, &pos_out);
-  set_bucket_position(&b2, &pos_out);
+  b_set_word_and_increment(&b2, &wo);
 
   strcpy(wc.word, "AHHAHAA");
   init_transformator_concat(&tr, &wc);
-  next_word(&wi, &b);
+  b_get_word_and_increment(&wi, &b);
   transform(&wo, &tr, &wi);
-  set_word(&b2, &wo, &pos_out);
-  set_bucket_position(&b2, &pos_out);
+  b_set_word_and_increment(&b2, &wo);
 
-  print_bucket(&b2);
+  print_bucket(&b2, "'", "' ");
+  printf("\n");
   printf("-------------\n");
 
   init_bucket_array(&b2, 4);
   init_bucket_file(&bf, "./dict/dict.test");
   init_generator_combination(&gen, 3);
   while(generate_next(&b2, &gen, &bf)) {
-    print_bucket(&b2);
-    printf("--\n");
+    print_bucket(&b2, "'", "' ");
+    printf("\n");
   }
   printf("-------------\n");
 
@@ -86,8 +83,8 @@ int main()
   init_generator_lexical_combination(&gen);
   set_bucket_position(&b, &b.first);
   while(generate_next(&b2, &gen, &b)) {
-    print_bucket(&b2);
-    printf("--\n");
+    print_bucket(&b2, "'", "' ");
+    printf("\n");
   }
   printf("-------------\n");
 
@@ -96,15 +93,15 @@ int main()
   init_generator_separator(&gen, &bs);
   set_bucket_position(&b, &b.first);
   while(generate_next(&b2, &gen, &b)) {
-    print_bucket(&b2);
-    printf("--\n");
+    print_bucket(&b2, "'", "' ");
+    printf("\n");
   }
   printf("-------------\n");
   init_bucket_array(&b2, 6);
-  init_generator_product(&gen, 6);
+  init_generator_product(&gen, 2);
   while(generate_next(&b2, &gen, &bs)) {
-    print_bucket(&b2);
-    printf("--\n");
+    print_bucket(&b2, "'", "' ");
+    printf("\n");
   }
 
   printf("-------------\n");
