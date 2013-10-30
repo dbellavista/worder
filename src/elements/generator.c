@@ -77,9 +77,14 @@ bool next_separator(Bucket* out, Bucket* in, Generator* g)
   bucket_size = get_bucket_size(in);
   newsize = bucket_size + ((g->separators_count <= bucket_size - 1) ?
     g->separators_count : bucket_size - 1);
-  set_bucket_size(out, newsize);
+
+  if(!set_bucket_size(out, newsize)) {
+    return false;
+  }
 
   set_bucket_position(out, &out->first);
+  set_bucket_position(in, &in->first);
+
   for(i = 0; b_get_word_and_increment(&inword, in); i++) {
     b_set_word_and_increment(out, &inword);
     if(i < g->separators_count) {
