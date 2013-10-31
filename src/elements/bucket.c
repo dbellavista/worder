@@ -37,8 +37,8 @@ off_t _read_word(char* dest, FILE* f)
         if(tmp[l - 2] == '\r') {
           tmp[l - 2] = 0;
         }
-        return ftello(f);
       }
+      return ftello(f);
     } else {
       size = sizeof(buffz);
       tmp = fgets(buffz, size, f);
