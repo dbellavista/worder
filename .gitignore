@@ -5,3 +5,5 @@ bin
 build
 include
 lib
+dict/*
+dict/dict.test
