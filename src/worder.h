@@ -21,10 +21,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define MAX_WORD_SIZE 50
-#define MAX_BUCKET_ARRAY_SIZE 500
-#define MAX_SEPARATOR_NUMBER 50
-#define MAX_COMBINATION_ELEMENTS 50
+#define MAX_WORD_SIZE 100
+#define MAX_BUCKET_ARRAY_SIZE 1024
+#define MAX_SEPARATOR_NUMBER 100
+#define MAX_COMBINATION_ELEMENTS 100
 
 struct word
 {
